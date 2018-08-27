@@ -1,16 +1,21 @@
 package com.arctouch.codechallenge.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.squareup.moshi.Json;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Movie {
+public class Movie implements Parcelable {
     public int id;
     public String title;
     public String overview;
-    public List<Genre> genres;
+    public List<Genre> genres = new ArrayList<>();
     @Json(name = "genre_ids")
-    public List<Integer> genreIds;
+    public List<Integer> genreIds = new ArrayList<>();
     @Json(name = "poster_path")
     public String posterPath;
     @Json(name = "backdrop_path")
@@ -64,5 +69,47 @@ public class Movie {
                 ", backdropPath='" + backdropPath + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(this.id);
+        parcel.writeString(this.title);
+        parcel.writeString(this.overview);
+        parcel.writeList(this.genres);
+        parcel.writeList(this.genreIds);
+        parcel.writeString(this.posterPath);
+        parcel.writeString(this.backdropPath);
+        parcel.writeString(this.releaseDate);
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel parcel) {
+            Movie movie = new Movie();
+            movie.readFromParcel(parcel);
+            return movie;
+        }
+
+        @Override
+        public Movie[] newArray(int i) {
+            return new Movie[0];
+        }
+    };
+
+    public void readFromParcel(Parcel parcel){
+        this.id = parcel.readInt();
+        this.title = parcel.readString();
+        this.overview = parcel.readString();
+        parcel.readList(this.genres = new ArrayList<>(), Genre.class.getClassLoader());
+        parcel.readList(this.genreIds = new ArrayList<>(), Genre.class.getClassLoader());
+        this.posterPath = parcel.readString();
+        this.backdropPath = parcel.readString();
+        this.releaseDate = parcel.readString();
     }
 }

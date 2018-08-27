@@ -1,6 +1,11 @@
 package com.arctouch.codechallenge.model;
 
-public class Genre {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class Genre implements Parcelable{
 
     public int id;
     public String name;
@@ -26,5 +31,37 @@ public class Genre {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+
+    }
+
+
+    public static final Parcelable.Creator<Genre> CREATOR = new Creator<Genre>() {
+        @Override
+        public Genre createFromParcel(Parcel parcel) {
+            Genre genre = new Genre();
+            genre.readFromParcel(parcel);
+            return genre;
+        }
+
+        @Override
+        public Genre[] newArray(int i) {
+            return new Genre[0];
+        }
+    };
+
+    public  void readFromParcel(Parcel parcel){
+        this.id = parcel.readInt();
+        this.name = parcel.readString();
     }
 }
